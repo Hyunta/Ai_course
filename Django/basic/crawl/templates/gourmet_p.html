@@ -1,0 +1,16 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>gourmet_p</title>
+</head>
+<body>
+{% if p_list %}
+    <ul>
+        {% for p in p_list %}
+            <li>{{ p }}</li>
+        {% endfor %}
+    </ul>
+{% endif %}
+</body>
+</html>

@@ -1,0 +1,150 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>KaKao | Chat</title>
+  <link
+          rel="stylesheet"
+          href="https://use.fontawesome.com/releases/v5.7.2/css/all.css"
+          integrity="sha384-fnmOCqbTlWIlj8LyTjo7mOUStjsKC4pOpQbqyi7RrhN7udi9RwhKkMHpvLbHG9Sr"
+          crossorigin="anonymous"
+  />
+  <link rel="stylesheet" href="/static/css/style.css" />
+</head>
+<body class="chats-body">
+<div class="header__wrapper">
+  <!-- 상단 네비게이션바  **페이지공통부분**-->
+  <div class="status-bar">
+    <!-- 네비게이션 왼쪽- 시간 -->
+    <div class="status-bar__column">
+      <span class="status-clock">13:53</span>
+    </div>
+    <!-- 네비게이션 오른쪽- 아이콘 -->
+    <div class="status-bar__column">
+      <!-- 시계 -->
+      <i class="fas fa-clock"></i>
+      <!-- 음량 -->
+      <i class="fas fa-volume-mute"></i>
+      <i class="fas fa-wifi"></i>
+      <!-- 베터리 퍼센트 -->
+      <span class="status-battery-level">100%</span>
+      <!-- 베터리 아이콘-->
+      <i class="fas fa-battery-full"></i>
+    </div>
+  </div>
+  <!-- 헤더부분   title과 icon 페이지별 차이있음-->
+  <header class="header">
+    <div class="header__header-column">
+      <!-- 뒤로가기 버튼 -->
+      <a href="/" class="header__back-btn">
+        <i class="fas fa-arrow-left "></i>
+      </a>
+      <!-- 타이틀 -->
+      <h1 class="header__title">채팅</h1>
+    </div>
+    <!-- 아이콘 리스트 -->
+    <div class="header__header-column">
+      <!-- 상단 네비게이션과 다르게 아이콘간 간격이 있음 - span 안에 넣은 이유 -->
+      <!-- 돋보기 -->
+      <span class="header__icon"><i class="fas fa-search"></i></span>
+      <span class="header__icon"><i class="fas fa-bars"></i></span>
+    </div>
+  </header>
+</div>
+<!-- chat 콘텐츠 -->
+<main class="chat-screen">
+  <!-- 메시지 리스트 -->
+  <ul id="chat_ul" class="chat__messages">
+    <!-- 채팅방 타임 스탬프 -->
+    <span class="chat__timestamp">2020년 5월 4일</span>
+    <!-- 메시지 타입 1 - 아바타+ 작성자+ 메시지 + 타임스탬프 순  3컬럼 구성-->
+
+  </ul>
+  </ul>
+</main>
+<!-- 채팅 작성 양식  3컬럼 구성-->
+<div class="chat__write-container">
+
+  {% csrf_token %}
+  <input id="message_input" name="message" type="text" placeholder="메세지를 입력하세요" class="chat__write" class="chat__write-input">
+
+
+  <!-- 컬럼1 아이콘 -->
+  <div class="chat__icon-left chat__icon">
+    <i class="far fa-plus-square"></i>
+  </div>
+
+  <!-- 컬럼3 아이콘 -->
+  <div class="chat__icon-right chat__icon">
+        <span class="chat__write-icon">
+          <i class="fas fa-paper-plane" onclick="sendMessage()"></i>
+        </span>
+
+  </div>
+</div>
+</body>
+
+<script src="https://www.gstatic.com/firebasejs/8.1.1/firebase-app.js"></script>
+<script src="https://www.gstatic.com/firebasejs/8.1.1/firebase-messaging.js"></script>
+<script src="https://www.gstatic.com/firebasejs/8.2.1/firebase-analytics.js"></script>
+
+
+<script>
+
+
+firebase.initializeApp({{ firebase_config | safe }});
+firebase.analytics();
+
+const messaging = firebase.messaging();
+
+
+messaging.onMessage((payload) => {
+    console.log('Message received. ', payload);
+    recieveUI(payload.notification.body);
+});
+
+function sendUI(message) {
+    chat_ul = document.getElementById('chat_ul');
+    addli = document.createElement('li');
+    addli.setAttribute('class', 'sent-message message');
+    addli.innerHTML = "<span class='message__timestamp'>19:22</span><div class='message__content'><span class='message__bubble'>" + message + "</span></div>";
+    chat_ul.appendChild(addli);
+}
+
+function recieveUI(message) {
+    chat_ul = document.getElementById('chat_ul');
+    addli = document.createElement('li');
+    addli.setAttribute('class', 'incoming-message message');
+    addli.innerHTML = "<img src='/static/images/noprofile.jpg' class='message__avatar' /><div class='message__content'><span class='message__author'>Someone</span><span class='message__bubble'>" + message + "</span></div><span class='message__timestamp'>18:55</span>";
+    chat_ul.appendChild(addli);
+}
+
+function sendMessage() {
+
+    var message = document.getElementById('message_input').value;
+    var to = {{ to }}
+    var csrfmiddlewaretoken = document.getElementsByName('csrfmiddlewaretoken')[0].value;
+
+    sendUI(message);
+
+    var httpRequest = new XMLHttpRequest();
+    httpRequest.onreadystatechange = function() {
+        if (httpRequest.readyState == XMLHttpRequest.DONE && httpRequest.status == 200) {
+            //document.getElementById("text").innerHTML = httpRequest.responseText;
+        }
+    };
+    // POST 방식의 요청은 데이터를 Http 헤더에 포함시켜 전송함.
+    httpRequest.open("POST", "/chat", true);
+    httpRequest.setRequestHeader("Content-Type", "application/x-www-form-urlencoded");
+    httpRequest.send("message=" + message + "&to=" + to + "&csrfmiddlewaretoken="+csrfmiddlewaretoken);
+}
+
+function getCookie(name) {
+    const value = "; " + document.cookie;
+    const parts = value.split("; " + name + "=");
+    if (parts.length === 2) return parts.pop().split(";").shift();
+}
+
+</script>
+</html>

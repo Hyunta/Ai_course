@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>KaKao | friends</title>
+    <link
+      rel="stylesheet"
+      href="https://use.fontawesome.com/releases/v5.7.2/css/all.css"
+      integrity="sha384-fnmOCqbTlWIlj8LyTjo7mOUStjsKC4pOpQbqyi7RrhN7udi9RwhKkMHpvLbHG9Sr"
+      crossorigin="anonymous"
+    />
+    <link rel="stylesheet" href="/static/css/style.css" />
+  </head>
+  <body>
+  </body>
+<script src="https://developers.kakao.com/sdk/js/kakao.js"></script>
+<script>
+        // SDK를 초기화 합니다. 사용할 앱의 JavaScript 키를 설정해 주세요.
+        Kakao.init('282446780362e9f307ca42b4ca3ed3c6');
+
+        // SDK 초기화 여부를 판단합니다.
+        console.log(Kakao.isInitialized());
+        // 아래는 데모를 위한 UI 코드입니다.
+        displayToken()
+
+        function displayToken() {
+            const token = getCookie('authorize-access-token')
+            if (token) {
+                Kakao.Auth.setAccessToken(token)
+                Kakao.Auth.getStatusInfo(({
+                    status
+                }) => {
+                    if (status === 'connected') {
+                        document.getElementById('token-result').innerText = 'login success. token: ' + Kakao.Auth.getAccessToken()
+                    } else {
+                        Kakao.Auth.setAccessToken(null)
+                    }
+                })
+            }
+        }
+
+        getPermission()
+        function getPermission(){
+             Kakao.Auth.authorize({
+                      redirectUri: 'http://127.0.0.1:8000/api/friends',
+                      scope: 'friends, profile, talk_message'
+             });
+        }
+
+        function getCookie(name) {
+            const value = "; " + document.cookie;
+            const parts = value.split("; " + name + "=");
+            if (parts.length === 2) return parts.pop().split(";").shift();
+        }
+</script>
+</html>

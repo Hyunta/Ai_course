@@ -1,0 +1,17 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>webtoon_g</title>
+</head>
+<body>
+<h1>Webtoon 검색</h1>
+URL을 검색하세요
+
+    <form method ="post" >
+        <input type="text" name ="url">
+        {% csrf_token %}
+        <input type = "submit" value = "검색">
+    </form>
+</body>
+</html>

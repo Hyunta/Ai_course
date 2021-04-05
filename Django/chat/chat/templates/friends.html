@@ -1,0 +1,318 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>카카오 | 친구목록</title>
+  <link
+          rel="stylesheet"
+          href="https://use.fontawesome.com/releases/v5.7.2/css/all.css"
+          integrity="sha384-fnmOCqbTlWIlj8LyTjo7mOUStjsKC4pOpQbqyi7RrhN7udi9RwhKkMHpvLbHG9Sr"
+          crossorigin="anonymous"
+  />
+  <link rel="stylesheet" href="/static/css/style.css" />
+</head>
+<body>
+<!-- 상단 네비게이션바  **페이지공통부분**-->
+<div class="status-bar">
+  <!-- 네비게이션 왼쪽- 시간 -->
+  <div class="status-bar__column">
+    <span class="status-clock">13:53</span>
+  </div>
+  <!-- 네비게이션 오른쪽- 아이콘 -->
+  <div class="status-bar__column">
+    <!-- 시계 -->
+    <i class="fas fa-clock"></i>
+    <!-- 음량 -->
+    <i class="fas fa-volume-mute"></i>
+    <i class="fas fa-wifi"></i>
+    <!-- 베터리 퍼센트 -->
+    <span class="status-battery-level">100%</span>
+    <!-- 베터리 아이콘-->
+    <i class="fas fa-battery-full"></i>
+  </div>
+</div>
+<!-- 헤더부분   title과 icon 페이지별 차이있음-->
+<header class="header">
+  <div class="header__header-column">
+    <!-- 타이틀 -->
+    <a href="/"><h1 class="header__title">친구</h1></a>
+  </div>
+  <!-- 아이콘 리스트 -->
+  <div class="header__header-column">
+    <!-- 상단 네비게이션과 다르게 아이콘간 간격이 있음 - span 안에 넣은 이유 -->
+    <!-- 돋보기 -->
+    <span class="header__icon"><i class="fas fa-search"></i></span>
+    <!-- 톱니바퀴 -->
+    <span class="header__icon"><i class="fas fa-cog"></i></span>
+  </div>
+</header>
+<!-- friends 콘텐츠 -->
+<!-- friend row= 프로필한명 은 두개의 컬럼으로 이루어짐
+컬럼1: 아바타 이름 상태메세지
+컬럼2: 듣고있는 음악과 같은 부가정보 -->
+<main class="friends">
+  {% csrf_token %}
+  <!-- 헤더 부분과 연결된 부분  다른 friend와 구별필요한 부분  -->
+  <header class="friends__header">
+    <div class="friends__friend friend">
+      <!-- 컬럼1 -->
+      <div class="friend__column">
+        <!-- 프로필 사진 -->
+        <a href="profile.html">
+          <img id="my_profileImage" class="g-avatar friend__avatar" />
+        </a>
+        <div class="friend__content">
+          <!-- 이름 -->
+          <span id="my_nickname" class="friend__name">
+              </span>
+        </div>
+      </div>
+    </div>
+  </header>
+  <!-- friends__header과 마찬가지로 일반 friend와 구별필요 -->
+  <div class="friends__plus">
+    <!-- 서브 타이틀 -->
+    <h5 class="friends__title">플러스 친구</h5>
+    <div class="friends__friend friend">
+      <!-- 컬럼1 -->
+      <div class="friend__column">
+        <!-- 프로필 사진 -->
+        <img src="/static/images/kakao-plus.png" class="friend__avatar" />
+        <div class="friend__content">
+          <!-- 이름 -->
+          <span class="friend__name">
+                플러스친구
+              </span>
+          <!-- plus friend는 상태창 없음  -->
+        </div>
+      </div>
+      <!-- 컬럼2 -->
+      <div class="friend__column"></div>
+    </div>
+  </div>
+
+  <!-- 동일한 양식의 friend들의 list == 복붙하면 몇명이든 추가가능-->
+  <ul id="friends_list" class="friends__list">
+    <!-- 서브 타이플 -->
+    <h5 id="friends_cnt" class="friends__title">친구 </h5>
+    <!-- friend의 베이스 폼 -->
+    <li class="friends__friend friend">
+      <!-- 컬럼1 -->
+      <div class="friend__column">
+        <img src="/static/images/noprofile.jpg" class="friend__avatar" />
+        <div class="friend__content">
+          <!-- 이름 -->
+          <span class="friend__name">
+                <button class ="api-btn" onclick="unlinkApp()">앱 탈퇴하기</button> <br> <br>
+              </span>
+          <!-- 상태창 -->
+          <span class="friend__status"> </span>
+        </div>
+      </div>
+      <!-- 컬럼2 -->
+      <div class="friend__column">
+        <div class="friend__now-listening">
+              <span
+              >EX-Kiana Lede
+                <i class="fas fa-play"></i>
+              </span>
+          <!-- 재생 아이콘 -->
+        </div>
+      </div>
+    </li>
+  </ul>
+</main>
+<!-- 하단 네비게이션바 -->
+<nav class="nav">
+  <ul class="nav__list">
+    <!-- friends 링크 -->
+    <li class="nav__list-item">
+      <a href="friends.html" class="nav__list-link">
+        <i class="fas fa-user"></i>
+      </a>
+    </li>
+    <!-- chats 링크 -->
+    <li class="nav__list-item">
+      <a href="index.html" class="nav__list-link">
+        <div class="nav__badge">8</div>
+        <i class="far fa-comment"></i>
+      </a>
+    </li>
+    <!-- find링크 -->
+    <li class="nav__list-item">
+      <a href="find.html" class="nav__list-link">
+        <i class="fas fa-search"></i>
+      </a>
+    </li>
+    <!-- more링크 -->
+    <li class="nav__list-item">
+      <a href="more.html" class="nav__list-link">
+        <i class="fas fa-ellipsis-h"></i>
+      </a>
+    </li>
+  </ul>
+</nav>
+
+
+</body>
+<script src="https://developers.kakao.com/sdk/js/kakao.js"></script>
+<script src="https://www.gstatic.com/firebasejs/8.1.1/firebase-app.js"></script>
+<script src="https://www.gstatic.com/firebasejs/8.1.1/firebase-messaging.js"></script>
+<script src="https://www.gstatic.com/firebasejs/8.2.1/firebase-analytics.js"></script>
+
+<script>
+
+
+firebase.initializeApp({{ firebase_config | safe }});
+firebase.analytics();
+
+const messaging = firebase.messaging();
+
+
+// SDK를 초기화 합니다. 사용할 앱의 JavaScript 키를 설정해 주세요.
+Kakao.init('{{ kakao_js_key }}');
+
+// SDK 초기화 여부를 판단합니다.
+console.log(Kakao.isInitialized());
+
+displayToken()
+
+function displayToken() {
+    const token = getCookie('authorize-access-token')
+    if (token) {
+        Kakao.Auth.setAccessToken(token)
+        Kakao.Auth.getStatusInfo(({
+            status
+        }) => {
+            if (status === 'connected') {
+                console.log('connected')
+            } else {
+                Kakao.Auth.setAccessToken(null)
+            }
+        })
+    }
+}
+
+function getCookie(name) {
+    const value = "; " + document.cookie;
+    const parts = value.split("; " + name + "=");
+    if (parts.length === 2) return parts.pop().split(";").shift();
+}
+
+
+
+
+messaging.getToken({
+    vapidKey: '{{ firebase_vapidKey }}'
+}).then((currentToken) => {
+    if (currentToken) {
+        var my_id;
+        var my_token;
+
+        console.log(currentToken);
+        getProfile(currentToken);
+    } else {
+        console.log('No registration token available. Request permission to generate one.');
+    }
+}).catch((err) => {
+    console.log('An error occurred while retrieving token. ', err);
+    console.log('Error retrieving registration token. ', err);
+});
+
+
+
+
+function setToken(myid, mytoken) {
+    var csrfmiddlewaretoken = document.getElementsByName('csrfmiddlewaretoken')[0].value;
+
+    var httpRequest = new XMLHttpRequest();
+    httpRequest.onreadystatechange = function() {
+        if (httpRequest.readyState == XMLHttpRequest.DONE && httpRequest.status == 200) {
+            //document.getElementById("text").innerHTML = httpRequest.responseText;
+        }
+    };
+    // POST 방식의 요청은 데이터를 Http 헤더에 포함시켜 전송함.
+
+
+    httpRequest.open("POST", "/settoken", true);
+    httpRequest.setRequestHeader("Content-Type", "application/x-www-form-urlencoded");
+    httpRequest.send("myid=" + myid + "&mytoken=" + mytoken + "&csrfmiddlewaretoken="+csrfmiddlewaretoken);
+}
+
+
+
+
+function getProfile(my_token) {
+    Kakao.API.request({
+        url: '/v2/user/me',
+        success: function(response) {
+            console.log(response.id);
+            setToken(response.id, my_token)
+        },
+        fail: function(error) {
+            console.log(error);
+        }
+    });
+    Kakao.API.request({
+        url: '/v1/api/talk/profile',
+        success: function(response) {
+            if (response) {
+
+                document.getElementById('my_nickname').innerText = response.nickName;
+                if (response.thumbnailURL == '') {
+                    document.getElementById('my_profileImage').setAttribute('src', '/static/images/noprofile.jpg');
+                } else {
+                    document.getElementById('my_profileImage').setAttribute('src', response.thumbnailURL);
+                }
+
+            }
+        },
+        fail: function(error) {
+            console.log(error);
+        }
+    });
+}
+
+getFriendsList()
+
+function getFriendsList() {
+    Kakao.API.request({
+        url: '/v1/api/talk/friends',
+        success: function(response) {
+            console.log(response.elements);
+            friend_ul = document.getElementById('friends_list');
+            document.getElementById('friends_cnt').innerText = '친구 ' + response.elements.length;
+            for (var i = 0; i < response.elements.length; i++) {
+                var profile_img_url = '';
+                if (response.elements[i].profile_thumbnail_image == '') {
+                    profile_img_url = '/static/images/noprofile.jpg';
+                } else {
+                    profile_img_url = response.elements[i].profile_thumbnail_image;
+                }
+                addli = document.createElement('li');
+                addli.setAttribute('class', 'friends__friend friend');
+                addli.innerHTML = "<a href='/chat?to=" + response.elements[i].id + "'><div class='friend__column'><img src='" + profile_img_url + "' class='friend__avatar' /><div class='friend__content'><!-- 이름 --><span class='friend__name'>" + response.elements[i].profile_nickname + "</span></div></div>";
+                friend_ul.appendChild(addli);
+            }
+        },
+        fail: function(error) {
+            console.log(error);
+        }
+    });
+}
+
+function unlinkApp() {
+    Kakao.API.request({
+        url: '/v1/user/unlink',
+        success: function(res) {
+            alert('success: ' + JSON.stringify(res))
+        },
+        fail: function(err) {
+            alert('fail: ' + JSON.stringify(err))
+        },
+    })
+}
+</script>
+
+</html>

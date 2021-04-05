@@ -1,0 +1,16 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>webtoon_p</title>
+</head>
+<body>
+{% if imgs %}
+    <ul>
+        {% for img in imgs %}
+            <li>{{ img }}</li>
+        {% endfor %}
+    </ul>
+{% endif %}
+</body>
+</html>
