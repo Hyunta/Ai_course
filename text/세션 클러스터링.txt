@@ -1,0 +1,70 @@
+1. 아파치 설정
+  1) workers.properties 파일 설정
+	worker.lb.balanced_workers=worker1,worker2	이 라인 밑에
+	worker.lb.sticky_session=true			<- 이거 추가
+
+	
+  2) 서버 재시작
+	httpd.exe 껐다가 다시 키기
+
+2. 톰캣 설정
+  1) 서버 설정
+	톰캣 압축 푼 곳 conf 폴더 밑에 server.xml 파일을 메모장으로 열기
+
+	132번 라인 쯤에
+
+	<Engine name="Catalina" defaultHost="localhost"> 이거를 다음과 같이 수정
+
+	<Engine name="Catalina" defaultHost="localhost" jvmRoute="worker1">	톰캣1은 worker1 톰캣2번은 worker2
+
+
+
+	거의 맨 밑에 </Host> 이 라인 위에 다음 내용 추가
+
+<Cluster className="org.apache.catalina.ha.tcp.SimpleTcpCluster"
+                 channelSendOptions="8">
+
+          <Manager className="org.apache.catalina.ha.session.DeltaManager"
+                   expireSessionsOnShutdown="false"
+                   notifyListenersOnReplication="true"/>
+
+          <Channel className="org.apache.catalina.tribes.group.GroupChannel">
+            <Membership className="org.apache.catalina.tribes.membership.McastService"
+                        address="228.0.0.4"
+                        port="45564"
+                        frequency="500"
+                        dropTime="3000"/>
+            <Receiver className="org.apache.catalina.tribes.transport.nio.NioReceiver"
+                      address="auto"
+                      port="4000"
+                      autoBind="100"
+                      selectorTimeout="5000"
+                      maxThreads="6"/>
+
+            <Sender className="org.apache.catalina.tribes.transport.ReplicationTransmitter">
+              <Transport className="org.apache.catalina.tribes.transport.nio.PooledParallelSender"/>
+            </Sender>
+            <Interceptor className="org.apache.catalina.tribes.group.interceptors.TcpFailureDetector"/>
+            <Interceptor className="org.apache.catalina.tribes.group.interceptors.MessageDispatchInterceptor"/>
+          </Channel>
+
+          <Valve className="org.apache.catalina.ha.tcp.ReplicationValve"
+                 filter=""/>
+          <Valve className="org.apache.catalina.ha.session.JvmRouteBinderValve"/>
+
+          <Deployer className="org.apache.catalina.ha.deploy.FarmWarDeployer"
+                    tempDir="/tmp/war-temp/"
+                    deployDir="/tmp/war-deploy/"
+                    watchDir="/tmp/war-listen/"
+                    watchEnabled="false"/>
+
+          <ClusterListener className="org.apache.catalina.ha.session.ClusterSessionListener"/>
+        </Cluster>
+
+  2) 서버 재시작
+	startup.bat 껐다가 다시 키기
+
+
+
+
+

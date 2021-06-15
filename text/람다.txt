@@ -1,0 +1,113 @@
+
+
+9. 서버리스 아키텍처(AWS Lambda, AWS API Gateway)
+  (1) 서버리스 아키텍처란?
+	서버리스(Serverless)를 직역하자면, “서버가 없다” 라는 의미가 있습니다. 하지만, 사실상 서버가 없는건 아닙니다. 
+	특정 작업을 수행하기 위해서 컴퓨터를 혹은 가상머신에 서버를 설정하고, 이를 통하여 처리 하는 것이 아님을 의미합니다.
+	대신 FaaS (Function as a Service) 에 의존하여 작업을 처리하게 됩니다. 
+	FaaS 를 제공하는 서비스 중에선, AWS Lambda, Azure Functions, Google Cloud Functions 등이 있습니다.
+
+
+  (2) AWS Lambda
+	AWS Lambda는 서버를 프로비저닝하거나 관리하지 않고도 코드를 실행할 수 있게 해주는 컴퓨팅 서비스입니다. 
+	AWS Lambda는 필요 시에만 코드를 실행하며, 하루에 몇 개의 요청에서 초당 수천 개의 요청까지 자동으로 확장이 가능합니다. 
+	사용한 컴퓨팅 시간에 대해서만 요금을 지불하면 되고 코드가 실행되지 않을 때는 요금이 부과되지 않습니다. 
+	AWS Lambda를 사용하면 사실상 모든 유형의 애플리케이션 또는 백엔드 서비스를 실행할 수 있으며 이를 관리할 필요는 전혀 없습니다. 
+	AWS Lambda는 고가용성 컴퓨팅 인프라에서 코드를 실행하고 서버와 운영 체제 유지 관리, 용량 프로비저닝 및 자동 조정, 
+	코드 및 보안 패치 배포, 코드 모니터링 및 로깅 등 모든 컴퓨팅 리소스 관리를 수행합니다. AWS Lambda가 지원하는 언어 중 하나로 코드를 
+	공급하기만 하면 됩니다(현재 Node.js, Java, C#, Go 및 Python).
+
+    1) 프리티어
+	월별 무료 요청 1,000,000건
+	월별 컴퓨팅 시간 최대 3백만 2천 초
+
+    2) 람다 함수
+	Lambda 함수를 만드는 시점에 서비스가 코드를 실행할 때 AWS Lambda가 호출할 수 있는 코드의 함수인 핸들러를 지정합니다. 
+	Python에서 핸들러 함수를 생성할 때 다음과 같은 일반적인 구문 구조를 사용합니다.
+
+		import json
+	
+		print('Loading function')
+	
+		def lambda_handler(event, context):
+		    #print("Received event: " + json.dumps(event, indent=2))
+		    print("value1 = " + event['key1'])
+		    print("value2 = " + event['key2'])
+		    print("value3 = " + event['key3'])
+		    return event['key1']  # Echo back the first key value
+		    #raise Exception('Something went wrong')
+
+	event - AWS Lambda는 이 파라미터를 사용하여 이벤트 데이터를 핸들러에 전달합니다. 이 파라미터는 일반적인 Python dict 유형입니다. 
+		또한 list, str, int, float 또는 NoneType 유형이 될 수 있습니다.
+
+	context - AWS Lambda는 이 파라미터를 사용하여 실행 시간 정보를 핸들러에 제공합니다. 이 파라미터는 LambdaContext 유형입니다.
+
+
+
+
+	함수를 호출할 때 따로 전달하는 데이터는 없고
+	반환 값을 'Hello World!!' 라고 반환하는 함수
+
+
+
+
+
+
+
+
+
+
+
+
+
+  (3) AWS API Gateway
+
+    1) 프리티어
+	월별 수신한 API 호출 1백만 건 per month
+
+
+
+
+  (4) 람다 함수를 이용하기 까지
+	람다 함수 생성 -> API Gateway에서 API 생성 -> 리소스 생성 -> 메소드 생성 -> API 배포 -> 사용
+
+
+
+  (5) 람다로 RDS 연결
+    1) 필요한 패키지를 추가
+
+
+
+
+
+
+
+import sys
+import logging
+import pymysql
+
+def lambda_handler(event, context):
+    conn = pymysql.connect(host="[RDS 엔드포인트]", user="dbuser", password="qwer1234", db="web")
+    curs = conn.cursor()
+    sql = "select * from test where name='jhc'"
+    curs.execute(sql)
+    rows = curs.fetchall()
+    result = 0
+    for row in rows:
+        result = row[1]
+
+    conn.close()
+    return result
+
+database-1.c55jrjs9yxoi.ap-northeast-2.rds.amazonaws.com
+
+
+
+
+
+
+
+
+
+
+

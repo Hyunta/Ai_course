@@ -1,0 +1,91 @@
+DB 이중화
+  (1) Master 설정  (MySQL1)
+    1) C:\ProgramData\MySQL\MySQL Server 8.0\my.ini 파일 설정
+		
+	워드패드에서 server-id를 찾아서 server-id=1 이렇게 설정
+	워드패드에서 log-bin를 찾아서 log-bin="mysql-bin"
+
+	시작 버튼 누르고 -> services -> mysql80 서비스 재시작
+
+    2) Master 상태 확인
+	mysql 접속 후 다음 명령어 확인
+	show master status;
+
+    3) Replication할 때 사용할 계정 생성
+	CREATE USER '[사용자이름]'@'%' IDENTIFIED BY '[패스워드]'
+	GRANT REPLICATION SLAVE ON *.*  TO '[사용자이름]'@'%';
+	
+
+	select * from mysql.user where user='[이니셜]'\G
+		Repl_slave_priv 속성이 Y로 되어있는지 확인
+	
+
+
+    4) 현재 데이터 백업
+	cd /
+	cd "Program Files"
+	cd MySQL
+	cd "MySQL Server 8.0"
+	cd bin
+	mysqldump.exe -u root -p --all-databases > backup.sql
+
+
+  (2) Slave 설정  (MySQL2)
+    1) C:\ProgramData\MySQL\MySQL Server 8.0\my.ini 파일 설정
+	워드패드에서 server-id를 찾아서 server-id=2 이렇게 설정
+
+	시작 버튼 누르고 -> services -> mysql80 서비스 재시작
+
+
+    2) 데이터 복구
+	마스터 컴퓨터에 생성된 sql 파일을 슬레이브 컴퓨터로 옮긴다.(본체에 복사했다가 다시 복사하면 됨)
+
+	슬레이브 컴퓨터에서 cmd 실행해서 복구 진행
+		cd /
+		cd "Program Files"
+		cd MySQL
+		cd "MySQL Server 8.0"
+		cd bin
+		mysql.exe -u root -p  < backup.sql
+
+
+    3) Master 지정
+	mysql 클라이언트 실행해서 
+
+	change master to
+	master_host='[마스터 IP]',
+	master_user='[마스터에서 생성했던 사용자 이름]',
+	master_password='qwer1234',
+	master_log_file='mysql-bin.[마스터의 로그 번호]',
+	master_log_pos=[마스터의 포지션 번호];
+
+	* 마스터의 로그번호랑 마스터의 포지션 번호는 마스터 컴퓨터에서 클라이언트 실행 후 show master status; 명령으로 확인
+
+	change master to
+	master_host='13.209.3.232',
+	master_user='slave_sjb',
+	master_password='qwer1234',
+	master_log_file='mysql-bin.000001',
+	master_log_pos=1334;
+
+
+
+    4) 동기화 시작
+	start slave;
+
+    5) Slave 상태 확인
+	show slave status;
+
+		또는
+
+	show slave status\G
+
+
+
+
+
+
+
+
+
+

@@ -1,0 +1,83 @@
+1. 웹 서버 PC
+  1) phpmyadmin 설치
+	https://www.phpmyadmin.net/downloads/
+
+	다운 및 아파치가 설치된 곳 htdocs 밑에 압축 풀기, 폴더의 이름을 phpmyadmin 으로 변경
+
+  2) phpmyadmin 설정
+	config.sample.inc.php 파일을 복사해서 config.inc.php 파일 생성
+	생성한 config.inc.php을 열어서
+
+	수정 전
+		$cfg['Servers'][$i]['host'] = 'localhost';
+
+
+	수정 후
+		$cfg['Servers'][$i]['host'] = 'database-2.cdc7birwf2he.ap-northeast-2.rds.amazonaws.com';
+
+
+
+  3) php.ini 파일 설정(php가 설치된 곳)
+	896번 라인쯤에
+
+	;   extension=mysqli   해당 라인의 주석(;) 을 제거
+
+	수정 전 
+		;   extension=mysqli
+
+	수정 후
+		extension=mysqli
+	
+
+  4) 확인
+	아파치 웹서버를 재시작하고 http://인스턴스IP/phpmyadmin 로 접속
+
+
+
+
+
+
+
+1. 웹 서버 PC
+  1) 워드 프레스 다운
+   https://wordpress.org/latest.zip
+
+   다운 및 아파치가 설치된 곳 htdocs 밑에 압축 해제
+
+
+  2) 아파치 설정
+   아파치 설치된 곳 httpd.conf 파일 수정
+
+   162번 라인쯤에
+
+   #LoadModule rewrite_module modules/mod_rewrite.so 의 주석(#) 을 제거
+   
+
+   235번 라인쯤을 수정
+
+   수정 전
+
+   <Directory />
+       AllowOverride none
+       Require all denied
+   </Directory>
+
+   수정 후
+   <Directory />
+       AllowOverride All
+       Options All
+   </Directory>   
+
+
+   265번 라인쯤에
+   수정 전
+       Options Indexes FollowSymLinks
+
+   수정 후 
+       Options Indexes FollowSymLinks Multiviews
+
+
+
+
+
+

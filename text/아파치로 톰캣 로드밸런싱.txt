@@ -1,0 +1,43 @@
+1. 아파치 설정
+  1) workers.properties 파일 변경
+worker.list=lb
+
+worker.lb.type=lb
+worker.lb.balanced_workers=worker1,worker2
+
+worker.worker1.type=ajp13
+worker.worker1.host=[톰캣1번 IP]
+worker.worker1.port=8009
+worker.worker1.lbfactor=1
+
+worker.worker2.type=ajp13
+worker.worker2.host=[톰캣2번 IP]
+worker.worker2.port=8009
+worker.worker2.lbfactor=1
+
+
+  2) httpd.conf
+		LoadModule jk_module modules/mod_jk.so
+		JkworkersFile conf/workers.properties
+		JkMount /*.jsp worker1
+		JkLogFile logs/mod_jk.log
+		JkLogLevel info
+		JkLogStampFormat "[%a %b %d]"
+		JkRequestLogFormat "%w %V %T"
+
+		이걸 다음과 같이 변경
+
+		LoadModule jk_module modules/mod_jk.so
+		JkworkersFile conf/workers.properties
+		JkMount /*.jsp lb
+		JkLogFile logs/mod_jk.log
+		JkLogLevel info
+		JkLogStampFormat "[%a %b %d]"
+		JkRequestLogFormat "%w %V %T"
+
+
+
+2. 톰캣 설정
+  1) 톰캣 2번
+	톰캣1번에 webapps 밑에 생성했던 폴더 이름과 똑같은 폴더 만들고
+	jsp 파일도 똑같이 만드는데 파일의 내용만 다르게 만들기

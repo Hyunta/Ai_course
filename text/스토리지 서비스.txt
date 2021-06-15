@@ -1,0 +1,101 @@
+1. EBS
+  (1) EBS란?
+	Amazon Elastic Block Store(EBS)는 대규모로 처리량과 트랜잭션 집약적인 워크로드 모두를 지원하기 위해 
+	Amazon Elastic Compute Cloud(EC2)에서 사용하도록 설계된 사용하기 쉬운 고성능 블록 스토리지 서비스입니다. 
+	관계형 및 비관계형 데이터베이스, 엔터프라이즈 애플리케이션, 컨테이너화된 애플리케이션, 빅 데이터 분석 엔진, 
+	파일 시스템 및 미디어 워크플로와 같은 다양한 워크로드가 Amazon EBS에 널리 배포됩니다.
+
+  (2) 프리티어
+	30기가까지 무료
+
+  (3) 생성
+
+
+2. S3(Simple Storage Service)
+  (1) S3란?
+	아마존에서 제공하는 객체 스토리지 서비스
+
+	객체
+	object, AWS는 S3에 저장된 데이터 하나 하나를 객체라고 명명하는데, 하나 하나의 파일이라고 생각하면 된다.  
+
+	버킷
+	bucket, 객체가 파일이라면 버킷은 연관된 객체들을 그룹핑한 최상위 디렉토리라고 할 수 있다. 
+	버킷 단위로 지역(region)을 지정 할 수 있고, 또 버킷에 포함된 모든 객체에 대해서 일괄적으로 인증과 접속 제한을 걸 수 있다. 
+
+	버전관리
+	S3에 저장된 객체들의 변화를 저장. 
+	예를들어 A라는 객체를 사용자가 삭제하거나 변경해도 각각의 변화를 모두 기록하기 때문에 실수를 만회할 수 있다. 
+
+  (2) 프리티어
+	스탠다드 스토리지 5GB
+	Get 요청 20,000개
+	Put 요청 2,000개
+
+  (3) S3 생성
+
+  (4) EC2에서 S3 마운트해서 사용하기
+    1) S3FS 설치
+      [1] 관련 모듈 설치
+	sudo apt-get install build-essential git libfuse-dev libcurl4-openssl-dev libxml2-dev mime-support automake libtool
+	sudo apt-get install pkg-config libssl-dev
+
+      [2] S3FS 다운로드
+	git clone https://github.com/s3fs-fuse/s3fs-fuse
+ 
+      [3] S3FS 설치
+	cd s3fs-fuse/
+	./autogen.sh
+	./configure --prefix=/usr --with-openssl
+	make
+	sudo make install
+
+
+    2) 액세스 키 발급 및 적용
+      [1] 액세스 키 발급
+      [2] passwd-s3fs 파일 설정
+	vi /etc/passwd-s3fs
+	  [AWSAccessKeyId]:[AWSSecretKey]
+	
+	chmod 640 /etc/passwd-s3fs
+
+    3) S3FS 환경 설정
+	vi /etc/fuse.conf
+	  mount_max = 1000 주석 해제
+	  user_allow_other 주석 해제
+
+    4) S3 권한 설정
+
+    5) 마운트
+	s3fs [버킷 이름] [마운트 포인트] -o allow_other -o use_cache=/tmp
+
+
+  (5) S3를 활용한 정적 웹 서버 구축
+    1) S3 버킷 생성
+
+    2) 파일 업로드
+	test1.html, test2.html 파일 업로드
+	
+	test1.html test2.html로 이동하는 링크를 가진 페이지
+
+	test2.html은 그냥 test2 출력
+
+
+
+    3) 퍼블릭 읽기 허용
+	권한 탭 -> 버킷 정책에서 설정
+
+    4) 웹 사이트 호스팅 사용 체크
+
+    5) 테스트
+
+
+
+
+
+
+
+
+
+
+
+

@@ -1,0 +1,82 @@
+
+1. nginx
+  1) 설치
+	http://nginx.org/download/nginx-1.18.0.zip
+	다운 및 c드라이브 밑에 압축 해제
+
+
+  2) 방화벽 설정
+	클라우드 방화벽
+		인스턴스 선택 -> 보안탭 -> 보안그룹이름 클릭 -> 인바운드 규칙 편집 -> 규칙 추가
+			유형: 사용자 지정 TCP, 포트번호:80, 소스: 위치무관 -> 규칙 저장
+
+	윈도우 방화벽
+		시작 -> firewall 검색 -> check firewall status -> Turn windows defender firewall on or off -> 둘 다 끔
+
+
+  3) 설정
+	nginx로 접속하는 트래픽을 아파치로 역할 분배
+
+	C:\nginx-1.18.0\conf 밑에 nginx.conf 파일을 메모장으로 열어서 편집
+
+	35번 라인의 server { 라고 되어있는 곳 설정
+
+------------------------고치기 전-------------------------------------------
+    #gzip  on;
+
+    server {
+        listen       80;
+        server_name  localhost;
+
+        #charset koi8-r;
+
+        #access_log  logs/host.access.log  main;
+
+        location / {
+            root   html;
+            index  index.html index.htm;
+        }
+-------------------------------------------------------------------------------
+
+	
+------------------------고치기 후-------------------------------------------
+    #gzip  on;
+
+    upstream sjbapp1 {
+        server [아파치1의IP];
+        server [아파치2의IP];
+    }
+
+    server {
+        listen       80;
+        server_name  localhost;
+
+        #charset koi8-r;
+
+        #access_log  logs/host.access.log  main;
+
+        location / {
+            proxy_pass http://sjbapp1;
+        }
+-------------------------------------------------------------------------------
+
+	server 위에 upstream 추가
+
+	로케이션 안의 내용 다 지우고 proxy_pass로 변경
+
+	
+
+  4) 실행
+	cmd 실행
+		cd C:\nginx-1.18.0
+		nginx.exe
+
+	*아파치가 다 실행되어 있어야 함
+	*종료하고 싶으면 작업관리자 실행(ctrl+shift+esc)해서 nginx를 종료
+
+  5) 확인
+	아파치 서버에서 아파치 설치된 곳의 htdoc 밑에 html 파일 생성(파일 이름은 같고 내용은 둘이 다르게)
+
+	본체에서 웹브라우저로 nginx의 IP의 아파치에서 만든 파일 이름으로 접속해보면 아파치의 내용이 뜸
+
+

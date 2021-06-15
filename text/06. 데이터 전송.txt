@@ -1,0 +1,53 @@
+-------------------------------------------------------------------------
+	클라이언트가 웹 브라우저에서 DB까지 데이터 보내기
+-------------------------------------------------------------------------
+1. 웹에서 views.py로 전달
+  1) views.py
+	사용자의 요청을 처리하는 views.py에서 사용자가 요청하는 메소드에 따라 처리해주는 코드를 작성
+	views.py는 사용자의 요청을 받아 원하는 함수를 실행할 때 request 객체를 전달하는데
+	request 객체에는 메소드, 사용자가 전달한 데이터 등 다양한 정보가 들어 있다.
+
+    (1) GET으로 요청을 받을 때
+	    if request.method=="GET" :
+	        return render(request, 'test.html')
+
+    (2) POST로 요청을 받을 때
+	    if request.method=="POST" :
+	        return render(request, 'test2.html')	
+
+
+2. views.py에서 웹으로 전달
+  1) views.py
+
+from django.shortcuts import render
+from formtest.models import Fruit
+
+def read(request):
+    abcd = Fruit.objects.all()
+
+    return render(request, 'getgetget.html', {'qwer': abcd})
+
+
+  2) html 파일
+<body>
+{% if qwer %}
+    <ul>
+        {% for qw in qwer %}
+            <li>{{ qw.name }}</li>
+        {% endfor %}
+    </ul>
+{% endif %}
+</body>
+
+
+
+
+
+
+
+
+
+
+
+
+
